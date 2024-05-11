@@ -1,10 +1,11 @@
 package com.example.foody
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.facebook.shimmer.ShimmerFrameLayout
 
 class RecipesFragment : Fragment() {
 
@@ -13,6 +14,10 @@ class RecipesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipes, container, false)
+        val view = inflater.inflate(R.layout.fragment_recipes, container, false)
+
+        view.findViewById<ShimmerFrameLayout>(R.id.recyclerview).showShimmer(true)
+
+        return view
     }
 }
