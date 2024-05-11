@@ -1,10 +1,11 @@
-package com.example.foody
+package com.example.foody.ui.fragments.recipes
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.foody.R
 import com.facebook.shimmer.ShimmerFrameLayout
 
 class RecipesFragment : Fragment() {
