@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.foody.R
 import com.example.foody.adapters.RecipesAdapter
 import com.example.foody.util.NetworkResult
+import com.example.foody.util.observeOnce
 import com.example.foody.viewmodels.MainViewModel
 import com.example.foody.viewmodels.RecipesViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -56,7 +57,7 @@ class RecipesFragment : Fragment() {
 
     private fun readDatabase() {
         lifecycleScope.launch {
-            mainViewModel.readRecipes.observe(viewLifecycleOwner) { database ->
+            mainViewModel.readRecipes.observeOnce(viewLifecycleOwner) { database ->
                 if (database.isNotEmpty()) {
                     Log.d("RecipesFragment", "readDatabase called!")
                     mAdapter.setData(database[0].foodRecipe)
