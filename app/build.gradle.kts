@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-
+    val room_version = "2.6.1"
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -76,4 +76,9 @@ dependencies {
 
     // Image Loading library Coil
     implementation("io.coil-kt:coil:2.6.0")
+
+    // Room components
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
 }
