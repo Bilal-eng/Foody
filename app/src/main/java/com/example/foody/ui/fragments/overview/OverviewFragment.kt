@@ -1,16 +1,17 @@
 package com.example.foody.ui.fragments.overview
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import coil.load
 import com.example.foody.R
 import com.example.foody.models.Result
+import org.jsoup.Jsoup
 
 class OverviewFragment : Fragment() {
 
@@ -45,7 +46,10 @@ class OverviewFragment : Fragment() {
         titleTextView.text = myBundle?.title
         likesTextView.text = myBundle?.aggregateLikes.toString()
         timeTextView.text = myBundle?.readyInMinutes.toString()
-        summaryTextView.text = myBundle?.summary
+        myBundle?.summary.let {
+            val summary = Jsoup.parse(it).text()
+            summaryTextView.text = summary
+        }
 
         if (myBundle?.vegetarian == true) {
             vegetarianImageView.setColorFilter(
