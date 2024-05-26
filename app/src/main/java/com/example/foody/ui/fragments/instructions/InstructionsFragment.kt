@@ -5,7 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.example.foody.R
+import com.example.foody.models.Result
+import com.example.foody.util.Constants
 
 class InstructionsFragment : Fragment() {
 
@@ -14,6 +18,18 @@ class InstructionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_instructions, container, false)
+        val view = inflater.inflate(R.layout.fragment_instructions, container, false)
+
+        val args = arguments
+        val myBundle: Result? = args?.getParcelable(Constants.RECIPE_RESULT_KEY)
+
+        val instructionsWebView = view.findViewById<WebView>(R.id.instructions_webView)
+        instructionsWebView.webViewClient =
+            object : WebViewClient() {}
+        val websiteUrl: String = myBundle!!.sourceUrl
+        instructionsWebView.loadUrl(websiteUrl)
+
+        return view
     }
+
 }
