@@ -90,4 +90,7 @@ dependencies {
 
     // Jsoup
     implementation("org.jsoup:jsoup:1.13.1")
+
+    // SplashScreen
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
