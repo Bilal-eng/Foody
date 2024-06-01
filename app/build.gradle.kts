@@ -86,7 +86,7 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0-alpha01")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // Jsoup
     implementation("org.jsoup:jsoup:1.13.1")
