@@ -61,6 +61,8 @@ class FavoriteRecipesAdapter(
         val currentRecipe = favoriteRecipes[position]
         holder.bind(currentRecipe)
 
+        saveItemStateOnScroll(currentRecipe, holder)
+
         /**
          * Single Click Listener
          * */
@@ -90,6 +92,14 @@ class FavoriteRecipesAdapter(
                 true
             }
 
+        }
+    }
+
+    private fun saveItemStateOnScroll(currentRecipe: FavoritesEntity, holder: MyViewHolder) {
+        if (selectedRecipes.contains(currentRecipe)) {
+            changeRecipeStyle(holder, R.color.cardBackgroundLightColor, R.color.colorPrimary)
+        } else {
+            changeRecipeStyle(holder, R.color.cardBackgroundColor, R.color.strokeColor)
         }
     }
 
