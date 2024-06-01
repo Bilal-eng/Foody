@@ -13,6 +13,8 @@ import com.example.foody.R
 import com.example.foody.bindingadapters.RecipesRowBinding
 import com.example.foody.databinding.FragmentOverviewBinding
 import com.example.foody.models.Result
+import com.example.foody.util.Constants.Companion.RECIPE_RESULT_KEY
+import com.example.foody.util.retrieveParcelable
 
 class OverviewFragment : Fragment() {
 
@@ -27,7 +29,7 @@ class OverviewFragment : Fragment() {
         _binding = FragmentOverviewBinding.inflate(inflater, container, false)
 
         val args = arguments
-        val myBundle: Result? = args?.getParcelable("recipeBundle")
+        val myBundle: Result? = args!!.retrieveParcelable(RECIPE_RESULT_KEY) as Result?
 
         if (myBundle != null) {
             binding.mainImageView.load(myBundle.image)
