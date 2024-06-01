@@ -16,50 +16,57 @@
         android:background="@drawable/ic_splash_screen_light"
         tools:context=".ui.fragments.foodjoke.FoodJokeFragment">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/food_joke_cardView"
-            readApiResponse3="@{mainViewModel.foodJokeResponse}"
-            readDatabase3="@{mainViewModel.readFoodJoke}"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:visibility="invisible"
-            app:cardCornerRadius="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/strokeColor"
-            app:strokeWidth="1dp">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/food_joke_cardView"
+                readApiResponse3="@{mainViewModel.foodJokeResponse}"
+                readDatabase3="@{mainViewModel.readFoodJoke}"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/cardBackgroundColor">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:visibility="invisible"
+                app:cardCornerRadius="6dp"
+                app:strokeColor="@color/strokeColor"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/food_joke_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="@font/courgette"
-                    android:text="@string/lorem_ipsum"
-                    android:textColor="@color/titleColor"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/cardBackgroundColor">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/food_joke_textView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/courgette"
+                        android:text="@string/lorem_ipsum"
+                        android:textColor="@color/titleColor"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-        </com.google.android.material.card.MaterialCardView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </ScrollView>
 
         <ProgressBar
             android:id="@+id/progressBar"
