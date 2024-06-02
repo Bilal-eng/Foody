@@ -4,11 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import android.os.Parcelable
+import androidx.lifecycle.*
 import com.example.foody.data.Repository
 import com.example.foody.data.database.entities.FavoritesEntity
 import com.example.foody.data.database.entities.FoodJokeEntity
@@ -20,15 +17,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: Repository,
-    application: Application
+    private val repository: Repository, application: Application
 ) : AndroidViewModel(application) {
 
+    var recyclerViewState: Parcelable? = null
+
     /** ROOM DATABASE */
+
     val readRecipes: LiveData<List<RecipesEntity>> = repository.local.readRecipes().asLiveData()
     val readFavoriteRecipes: LiveData<List<FavoritesEntity>> =
         repository.local.readFavoriteRecipes().asLiveData()
@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(
             repository.local.insertFavoriteRecipes(favoritesEntity)
         }
 
-    fun insertFoodJoke(foodJokeEntity: FoodJokeEntity) =
+    private fun insertFoodJoke(foodJokeEntity: FoodJokeEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertFoodJoke(foodJokeEntity)
         }
@@ -54,10 +54,9 @@ class MainViewModel @Inject constructor(
             repository.local.deleteFavoriteRecipe(favoritesEntity)
         }
 
-    fun deleteAllFavoriteRecipes() =
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.local.deleteAllFavoriteRecipes()
-        }
+    fun deleteAllFavoriteRecipes() = viewModelScope.launch(Dispatchers.IO) {
+        repository.local.deleteAllFavoriteRecipes()
+    }
 
     /** RETROFIT */
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipe>> = MutableLiveData()
@@ -197,4 +196,5 @@ class MainViewModel @Inject constructor(
             else -> false
         }
     }
+
 }

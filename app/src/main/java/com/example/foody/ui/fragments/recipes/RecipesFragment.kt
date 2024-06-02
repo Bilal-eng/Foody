@@ -2,13 +2,11 @@ package com.example.foody.ui.fragments.recipes
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -26,21 +24,31 @@ import com.example.foody.util.observeOnce
 import com.example.foody.viewmodels.MainViewModel
 import com.example.foody.viewmodels.RecipesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
 
-    private var _binding: FragmentRecipesBinding? = null
+    private var dataRequested = false
     private val args by navArgs<RecipesFragmentArgs>()
 
+    private var _binding: FragmentRecipesBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var recipesViewModel: RecipesViewModel
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var recipesViewModel: RecipesViewModel
     private val mAdapter by lazy { RecipesAdapter() }
 
     private lateinit var networkListener: NetworkListener
+
+    override fun onResume() {
+        super.onResume()
+        if (mainViewModel.recyclerViewState != null) {
+            binding.recyclerview.layoutManager?.onRestoreInstanceState(mainViewModel.recyclerViewState)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,14 +57,29 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentRecipesBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.mainViewModel = mainViewModel
 
-        setHasOptionsMenu(true)
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.recipes_menu, menu)
+
+                val search = menu.findItem(R.id.menu_search)
+                val searchView = search.actionView as? SearchView
+                searchView?.isSubmitButtonEnabled = true
+                searchView?.setOnQueryTextListener(this@RecipesFragment)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         setupRecyclerView()
 
@@ -94,15 +117,6 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
         showShimmerEffect()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.recipes_menu, menu)
-
-        val search = menu.findItem(R.id.menu_search)
-        val searchView = search.actionView as? SearchView
-        searchView?.isSubmitButtonEnabled = true
-        searchView?.setOnQueryTextListener(this)
-    }
-
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (query != null) {
             searchApiData(query)
@@ -110,19 +124,25 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
         return true
     }
 
-    override fun onQueryTextChange(newText: String?): Boolean {
+    override fun onQueryTextChange(p0: String?): Boolean {
         return true
     }
 
     private fun readDatabase() {
         lifecycleScope.launch {
             mainViewModel.readRecipes.observeOnce(viewLifecycleOwner) { database ->
-                if (database.isNotEmpty() && !args.backFromBottomSheet) {
+                if (database.isNotEmpty() && !args.backFromBottomSheet
+                    || database.isNotEmpty() && dataRequested
+                ) {
                     Log.d("RecipesFragment", "readDatabase called!")
-                    mAdapter.setData(database[0].foodRecipe)
+                    mAdapter.setData(database.first().foodRecipe)
                     hideShimmerEffect()
                 } else {
-                    requestApiData()
+                    Log.d("RecipesFragment", "requestApiData called!")
+                    if (!dataRequested) {
+                        requestApiData()
+                        dataRequested = true
+                    }
                 }
             }
         }
@@ -143,7 +163,9 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
                     hideShimmerEffect()
                     loadDataFromCache()
                     Toast.makeText(
-                        requireContext(), response.message.toString(), Toast.LENGTH_SHORT
+                        requireContext(),
+                        response.message.toString(),
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
@@ -183,28 +205,29 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun loadDataFromCache() {
-        lifecycleScope.launch {
-            mainViewModel.readRecipes.observe(viewLifecycleOwner) { database ->
-                if (database.isNotEmpty()) {
-                    mAdapter.setData(database[0].foodRecipe)
-                }
+        mainViewModel.readRecipes.observe(viewLifecycleOwner) { database ->
+            if (database.isNotEmpty()) {
+                mAdapter.setData(database.first().foodRecipe)
             }
         }
     }
 
-
     private fun showShimmerEffect() {
-        binding.shimmerFrameLayout.visibility = View.VISIBLE
         binding.shimmerFrameLayout.startShimmer()
+        binding.shimmerFrameLayout.visibility = View.VISIBLE
+        binding.recyclerview.visibility = View.GONE
     }
 
     private fun hideShimmerEffect() {
-        binding.shimmerFrameLayout.visibility = View.GONE
         binding.shimmerFrameLayout.stopShimmer()
+        binding.shimmerFrameLayout.visibility = View.GONE
+        binding.recyclerview.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mainViewModel.recyclerViewState =
+            binding.recyclerview.layoutManager?.onSaveInstanceState()
         _binding = null
     }
 }
