@@ -1,32 +1,35 @@
 package com.example.foody.ui.fragments.instructions
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
-import androidx.fragment.app.Fragment
 import com.example.foody.databinding.FragmentInstructionsBinding
 import com.example.foody.models.Result
-import com.example.foody.util.Constants
+import com.example.foody.util.Constants.Companion.RECIPE_RESULT_KEY
+import com.example.foody.util.retrieveParcelable
 
 class InstructionsFragment : Fragment() {
 
     private var _binding: FragmentInstructionsBinding? = null
     private val binding get() = _binding!!
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentInstructionsBinding.inflate(inflater, container, false)
 
         val args = arguments
-        val myBundle: Result? = args?.getParcelable(Constants.RECIPE_RESULT_KEY)
+        val myBundle: Result? = args?.retrieveParcelable(RECIPE_RESULT_KEY)
 
         if (myBundle != null) {
             binding.instructionsWebView.webViewClient = object : WebViewClient() {}
+            binding.instructionsWebView.settings.javaScriptEnabled = true
             val websiteUrl: String = myBundle.sourceUrl
             binding.instructionsWebView.loadUrl(websiteUrl)
         }

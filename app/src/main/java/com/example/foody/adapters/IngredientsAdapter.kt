@@ -32,7 +32,7 @@ class IngredientsAdapter : RecyclerView.Adapter<IngredientsAdapter.MyViewHolder>
             crossfade(600)
             error(R.drawable.ic_error_placeholder)
         }
-        holder.binding.ingredientName.text = ingredientsList[position].name.replaceFirstChar {
+        holder.binding.ingredientName.text = ingredientsList[position].name?.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.ROOT
             ) else it.toString()
